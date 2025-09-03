@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Prototipo MUV Cargo - Escalado</title>
+    <style>
+        /* --- Estilos Generales y del Contenedor del Dispositivo --- */
+        body {
+            background-color: #f0f2f5;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        #device-simulator {
+            aspect-ratio: 1499 / 2667;
+            width: 100%;
+            max-width: 400px; 
+            max-height: 90vh;
+            border: 1px solid #ccc;
+            border-radius: 40px;
+            overflow: hidden;
+            position: relative;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            background-color: #fff;
+            display: flex; 
+        }
+
+        #app-container {
+            width: 100%;
+            height: 100%;
+            position: relative;
+        }
+
+        .screen {
+            width: 100%;
+            height: 100%;
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            position: absolute;
+            top: 0;
+            left: 0;
+            display: none; 
+        }
+
+        #screen-01 { background-image: url('01 home ueno.jpg'); display: block; }
+        #screen-02 { background-image: url('02 FTU 1.jpg'); }
+        #screen-03 { background-image: url('03 FTU 2.jpg'); }
+        #screen-04 { background-image: url('04 FTU 3.jpg'); }
+        #screen-05 { background-image: url('05 T&C sin aceptar.jpg'); }
+        #screen-06 { background-image: url('06 T&C aceptados.jpg'); }
+        #screen-07 { background-image: url('07 editar datos de contacto.jpg'); }
+        #screen-08 { background-image: url('08 editar datos personales.jpg'); }
+        #screen-09 { background-image: url('09 loader creando casilla.jpg'); }
+        #screen-11 { background-image: url('11 ya tenés tu casilla.jpg'); }
+        #screen-12 { background-image: url('12 home.jpg'); }
+        #screen-14 { background-image: url('14 side menu.jpg'); }
+        #screen-15 { background-image: url('15 tus direcciones.jpg'); }
+        #screen-16 { background-image: url('16 editar direccion.jpg'); }
+        #screen-17 { background-image: url('17 agregar direccion.jpg'); }
+        #screen-18 { background-image: url('18 tus direcciones con direccion extra.jpg'); }
+        #screen-19 { background-image: url('19 home con direccion contraida.jpg'); }
+        #screen-20 { background-image: url('20 tus paquetes.jpg'); }
+        #screen-21 { background-image: url('21 empty en py.jpg'); }
+        #screen-22 { background-image: url('22 filtro en usa 1.jpg'); }
+        #screen-23 { background-image: url('23 empty en camino.jpg'); }
+        #screen-24 { background-image: url('24 empty entregado.jpg'); }
+        
+        #screen-13 { 
+            background-image: url('13 home scroll.jpg');
+            background-size: contain;
+            background-position: center;
+            background-repeat: no-repeat;
+        }
+        
+        .clickable {
+            position: absolute;
+            cursor: pointer;
+            outline: 2px dashed red;
+        }
+        
+        #btn-goto-casilla { top: 325px; left: 42px; width: 120px; height: 40px; }
+        #btn-continue-2 { top: 565px; left: 138px; width: 123px; height: 37px;  }
+        #btn-continue-3 { top: 565px; left: 138px; width: 123px; height: 37px; }
+        #btn-continue-4 { top: 565px; left: 138px; width: 123px; height: 37px; }
+        #checkbox-tyc { top: 570px; left: 60px; width: 25px; height: 25px; }
+        #btn-continue-6 { top: 615px; left: 138px; width: 123px; height: 37px; }
+        #btn-continue-7 { top: 615px; left: 138px; width: 123px; height: 37px; }
+        #btn-continue-8 { top: 615px; left: 138px; width: 123px; height: 37px; }
+        #btn-goto-muvcargo { top: 612px; left: 130px; width: 145px; height: 36px; }
+        #copy-icon-1 { top: 345px; left: 190px; width: 15px; height: 15px; }
+        #copy-icon-2 { top: 370px; left: 273px; width: 15px; height: 15px; }
+        #copy-icon-3 { top: 415px; left: 65px; width: 15px; height: 15px; }
+        #copy-icon-4 { top: 440px; left: 263px; width: 15px; height: 15px; }
+        #copy-icon-5 { top: 463px; left: 138px; width: 15px; height: 15px; }
+        #copy-icon-6 { top: 487px; left: 152px; width: 15px; height: 15px; }
+        #copy-icon-7 { top: 510px; left: 214px; width: 15px; height: 15px; }
+        #copy-icon-8 { top: 534px; left: 265px; width: 15px; height: 15px; }
+        #copy-icon-12-1 { top: 340px; left: 185px; width: 15px; height: 15px; }
+        #copy-icon-12-2 { top: 360px; left: 260px; width: 15px; height: 15px; }
+        #copy-icon-12-3 { top: 406px; left: 65px; width: 15px; height: 15px; }
+        #copy-icon-12-4 { top: 427px; left: 250px; width: 15px; height: 15px; }
+        #copy-icon-12-5 { top: 449px; left: 132px; width: 15px; height: 15px; }
+        #copy-icon-12-6 { top: 471px; left: 147px; width: 15px; height: 15px; }
+        #copy-icon-12-7 { top: 492px; left: 203px; width: 15px; height: 15px; }
+        #copy-icon-12-8 { top: 515px; left: 253px; width: 15px; height: 15px; }
+        #btn-goto-calculator { top: 187px; left: 62px; width: 100px; height: 30px; }
+        #btn-menu-12, #btn-menu-13, #btn-menu-19 { top: 40px; left: 20px; width: 40px; height: 40px; }
+        #btn-back-to-home { top: 40px; left: 245px; width: 40px; height: 40px; }
+        #btn-sidemenu-calculator { top: 435px; left: 70px; width: 150px; height: 20px; }
+        #btn-sidemenu-addresses { top: 270px; left: 60px; width: 130px; height: 20px; }
+        #btn-back-home-from-addresses { top: 650px; left: 120px; width: 160px; height: 30px; }
+        #btn-edit-address { top: 260px; left: 100px; width: 45px; height: 20px; }
+        #btn-add-address { top: 315px; left: 40px; width: 130px; height: 20px; }
+        #btn-back-from-edit, #btn-back-from-add, #btn-back-arrow-18 { top: 40px; left: 20px; width: 40px; height: 40px; }
+        #btn-save-address { top: 645px; left: 140px; width: 120px; height: 30px; }
+        #btn-save-new-address { top: 645px; left: 140px; width: 120px; height: 30px; }
+        #btn-return-home-18 { top: 650px; left: 120px; width: 160px; height: 30px; }
+        #btn-expand-address, #btn-collapse-address { top: 253px; left: 330px; width: 20px; height: 20px; }
+        #btn-ver-mas-12 { top: 570px; left: 145px; width: 80px; height: 20px; }
+        #btn-ver-mas-13 { top: 370px; left: 140px; width: 80px; height: 20px; }
+        #btn-ver-mas-19 { top: 354px; left: 140px; width: 80px; height: 20px; }
+        #btn-home-from-packages { top: 650px; left: 120px; width: 160px; height: 30px; }
+        
+        .filter-en-usa { top: 150px; left: 27px; width: 80px; height: 80px; }
+        .filter-en-py { top: 150px; left: 115px; width: 80px; height: 80px; }
+        .filter-en-camino { top: 150px; left: 203px; width: 80px; height: 80px; }
+        .filter-entregado { top: 150px; left: 291px; width: 80px; height: 80px; }
+
+        #toast-notification {
+            position: absolute; bottom: 10%; left: 50%; transform: translateX(-50%);
+            background-color: rgba(20, 20, 20, 0.85); color: white;
+            padding: 12px 24px; border-radius: 25px; font-size: 14px;
+            white-space: nowrap; z-index: 100; opacity: 0; visibility: hidden;
+            transition: opacity 0.4s ease, visibility 0.4s ease;
+        }
+        #toast-notification.show { opacity: 1; visibility: visible; }
+
+        .form-input {
+            position: absolute; background-color: #fff; border: 1px solid #e0e0e0;
+            border-radius: 8px; padding: 12px; font-size: 16px;
+            width: 60%; box-sizing: border-box; left: 20%;
+            outline: 2px dashed red;
+        }
+        
+        #input-email { top: 417px; }
+        #input-telefono { top: 492px; }
+        #input-calle { top: 222px; }
+        #input-numero { top: 303px; }
+        #input-piso { top: 385px; }
+        #input-departamento { top: 461px; }
+        #input-cp { top: 537px; }
+        
+        .calculator-field {
+            position: absolute; 
+            border: none; 
+            background-color: #ffffff;
+            font-size: 20px; 
+            font-weight: 500; 
+            text-align: center;
+            color: #333; 
+            width: 105px; 
+            height: 28px;
+            padding: 5px; 
+            box-sizing: border-box;
+            border-radius: 8px;
+            outline: 2px dashed red;
+        }
+        .calculator-field:focus { 
+            outline: none; 
+            box-shadow: 0 0 0 2px rgba(255, 128, 0, 0.5);
+        }
+        
+        #calculator-peso { top: 585px; left: 53px; }
+        #calculator-costo { top: 585px; left: 210px; color: #d95800; background-color: #fee0cf; }
+        #calculator-peso-19 { top: 568px; left: 53px; }
+        #calculator-costo-19 { top: 570px; left: 210px; color: #d95800; background-color: #fee0cf; }
+    </style>
+</head>
+<body>
+    <div id="device-simulator">
+        <div id="app-container">
+            <div id="screen-01" class="screen"><div id="btn-goto-casilla" class="clickable"></div></div>
+            <div id="screen-02" class="screen"><div id="btn-continue-2" class="clickable"></div></div>
+            <div id="screen-03" class="screen"><div id="btn-continue-3" class="clickable"></div></div>
+            <div id="screen-04" class="screen"><div id="btn-continue-4" class="clickable"></div></div>
+            <div id="screen-05" class="screen"><div id="checkbox-tyc" class="clickable"></div></div>
+            <div id="screen-06" class="screen"><div id="btn-continue-6" class="clickable"></div></div>
+            <div id="screen-07" class="screen">
+                <input type="email" id="input-email" class="form-input" value="juanperez@gmail.com">
+                <input type="tel" id="input-telefono" class="form-input" value="+595911-223344">
+                <div id="btn-continue-7" class="clickable"></div>
+            </div>
+            <div id="screen-08" class="screen">
+                <input type="text" id="input-calle" class="form-input" value="Calle falsa"><input type="text" id="input-numero" class="form-input" value="123">
+                <input type="text" id="input-piso" class="form-input" value="4 B"><input type="text" id="input-departamento" class="form-input" value="Asunción">
+                <input type="text" id="input-cp" class="form-input" value="1410">
+                <div id="btn-continue-8" class="clickable"></div>
+            </div>
+            <div id="screen-09" class="screen"></div>
+            <div id="screen-11" class="screen">
+                <div id="copy-icon-1" class="clickable copy-icon-area"></div><div id="copy-icon-2" class="clickable copy-icon-area"></div>
+                <div id="copy-icon-3" class="clickable copy-icon-area"></div><div id="copy-icon-4" class="clickable copy-icon-area"></div>
+                <div id="copy-icon-5" class="clickable copy-icon-area"></div><div id="copy-icon-6" class="clickable copy-icon-area"></div>
+                <div id="copy-icon-7" class="clickable copy-icon-area"></div><div id="copy-icon-8" class="clickable copy-icon-area"></div>
+                <div id="btn-goto-muvcargo" class="clickable"></div>
+            </div>
+            <div id="screen-12" class="screen">
+                <div id="copy-icon-12-1" class="clickable copy-icon-area"></div><div id="copy-icon-12-2" class="clickable copy-icon-area"></div>
+                <div id="copy-icon-12-3" class="clickable copy-icon-area"></div><div id="copy-icon-12-4" class="clickable copy-icon-area"></div>
+                <div id="copy-icon-12-5" class="clickable copy-icon-area"></div><div id="copy-icon-12-6" class="clickable copy-icon-area"></div>
+                <div id="copy-icon-12-7" class="clickable copy-icon-area"></div><div id="copy-icon-12-8" class="clickable copy-icon-area"></div>
+                <div id="btn-goto-calculator" class="clickable"></div>
+                <div id="btn-menu-12" class="clickable"></div>
+                <div id="btn-expand-address" class="clickable"></div>
+                <div id="btn-ver-mas-12" class="clickable"></div>
+            </div>
+            <div id="screen-13" class="screen">
+                <input type="number" id="calculator-peso" class="calculator-field" value="2" step="0.1" min="0">
+                <input type="text" id="calculator-costo" class="calculator-field" readonly>
+                <div id="btn-menu-13" class="clickable"></div>
+                <div id="btn-ver-mas-13" class="clickable"></div>
+            </div>
+            <div id="screen-14" class="screen">
+                <div id="btn-back-to-home" class="clickable"></div>
+                <div id="btn-sidemenu-calculator" class="clickable"></div>
+                <div id="btn-sidemenu-addresses" class="clickable"></div>
+            </div>
+            <div id="screen-15" class="screen">
+                <div id="btn-back-home-from-addresses" class="clickable"></div>
+                <div id="btn-edit-address" class="clickable"></div>
+                <div id="btn-add-address" class="clickable"></div>
+            </div>
+            <div id="screen-16" class="screen">
+                <div id="btn-back-from-edit" class="clickable"></div>
+                <div id="btn-save-address" class="clickable"></div>
+            </div>
+            <div id="screen-17" class="screen">
+                <div id="btn-back-from-add" class="clickable"></div>
+                <div id="btn-save-new-address" class="clickable"></div>
+            </div>
+            <div id="screen-18" class="screen">
+                <div id="btn-back-arrow-18" class="clickable"></div>
+                <div id="btn-return-home-18" class="clickable"></div>
+            </div>
+            <div id="screen-19" class="screen">
+                <input type="number" id="calculator-peso-19" class="calculator-field" value="2" step="0.1" min="0">
+                <input type="text" id="calculator-costo-19" class="calculator-field" readonly>
+                <div id="btn-collapse-address" class="clickable"></div>
+                <div id="btn-menu-19" class="clickable"></div>
+                <div id="btn-ver-mas-19" class="clickable"></div>
+            </div>
+            <div id="screen-20" class="screen">
+                <div class="clickable filter-en-usa"></div><div class="clickable filter-en-py"></div>
+                <div class="clickable filter-en-camino"></div><div class="clickable filter-entregado"></div>
+            </div>
+            <div id="screen-21" class="screen">
+                <div class="clickable filter-en-usa"></div><div class="clickable filter-en-py"></div>
+                <div class="clickable filter-en-camino"></div><div class="clickable filter-entregado"></div>
+            </div>
+            <div id="screen-22" class="screen">
+                <div class="clickable filter-en-usa"></div><div class="clickable filter-en-py"></div>
+                <div class="clickable filter-en-camino"></div><div class="clickable filter-entregado"></div>
+            </div>
+            <div id="screen-23" class="screen">
+                <div class="clickable filter-en-usa"></div><div class="clickable filter-en-py"></div>
+                <div class="clickable filter-en-camino"></div><div class="clickable filter-entregado"></div>
+            </div>
+            <div id="screen-24" class="screen">
+                <div class="clickable filter-en-usa"></div><div class="clickable filter-en-py"></div>
+                <div class="clickable filter-en-camino"></div><div class="clickable filter-entregado"></div>
+            </div>
+            <div id="toast-notification">Copiado al portapapeles</div>
+        </div>
+    </div>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            let currentScreenId = 'screen-01';
+
+            function showScreen(screenId) {
+                currentScreenId = screenId;
+                const screens = document.querySelectorAll('.screen');
+                screens.forEach(screen => { screen.style.display = 'none'; });
+                const activeScreen = document.getElementById(screenId);
+                if (activeScreen) { activeScreen.style.display = 'block'; }
+            }
+
+            document.getElementById('btn-goto-casilla').addEventListener('click', () => { showScreen('screen-02'); });
+            document.getElementById('btn-continue-2').addEventListener('click', () => { showScreen('screen-03'); });
+            document.getElementById('btn-continue-3').addEventListener('click', () => { showScreen('screen-04'); });
+            document.getElementById('btn-continue-4').addEventListener('click', () => { showScreen('screen-05'); });
+            document.getElementById('checkbox-tyc').addEventListener('click', () => { showScreen('screen-06'); });
+            document.getElementById('btn-continue-6').addEventListener('click', () => { showScreen('screen-07'); });
+            document.getElementById('btn-continue-7').addEventListener('click', () => { showScreen('screen-08'); });
+            document.getElementById('btn-continue-8').addEventListener('click', () => {
+                showScreen('screen-09');
+                setTimeout(() => { showScreen('screen-11'); }, 1000); 
+            });
+            document.getElementById('btn-goto-muvcargo').addEventListener('click', () => { showScreen('screen-12'); });
+            document.getElementById('btn-goto-calculator').addEventListener('click', () => { showScreen('screen-13'); });
+            document.getElementById('btn-menu-12').addEventListener('click', () => { showScreen('screen-14'); });
+            document.getElementById('btn-menu-13').addEventListener('click', () => { showScreen('screen-14'); });
+            document.getElementById('btn-menu-19').addEventListener('click', () => { showScreen('screen-14'); });
+            document.getElementById('btn-back-to-home').addEventListener('click', () => { showScreen('screen-12'); });
+            document.getElementById('btn-sidemenu-calculator').addEventListener('click', () => { showScreen('screen-13'); });
+            document.getElementById('btn-sidemenu-addresses').addEventListener('click', () => { showScreen('screen-15'); });
+            document.getElementById('btn-back-home-from-addresses').addEventListener('click', () => { showScreen('screen-12'); });
+            document.getElementById('btn-edit-address').addEventListener('click', () => { showScreen('screen-16'); });
+            document.getElementById('btn-add-address').addEventListener('click', () => { showScreen('screen-17'); });
+            document.getElementById('btn-back-from-edit').addEventListener('click', () => { showScreen('screen-15'); });
+            document.getElementById('btn-save-address').addEventListener('click', () => { showScreen('screen-15'); });
+            document.getElementById('btn-back-from-add').addEventListener('click', () => { showScreen('screen-15'); });
+            document.getElementById('btn-save-new-address').addEventListener('click', () => { showScreen('screen-18'); });
+            document.getElementById('btn-back-arrow-18').addEventListener('click', () => { showScreen('screen-12'); });
+            document.getElementById('btn-return-home-18').addEventListener('click', () => { showScreen('screen-12'); });
+            document.getElementById('btn-expand-address').addEventListener('click', () => { showScreen('screen-19'); });
+            document.getElementById('btn-collapse-address').addEventListener('click', () => { showScreen('screen-12'); });
+            document.getElementById('btn-ver-mas-12').addEventListener('click', () => { showScreen('screen-20'); });
+            document.getElementById('btn-ver-mas-13').addEventListener('click', () => { showScreen('screen-20'); });
+            document.getElementById('btn-ver-mas-19').addEventListener('click', () => { showScreen('screen-20'); });
+            
+            // Lógica de filtros en pantallas de paquetes
+            document.querySelectorAll('.filter-en-usa').forEach(btn => btn.addEventListener('click', () => showScreen('screen-22')));
+            document.querySelectorAll('.filter-en-py').forEach(btn => btn.addEventListener('click', () => showScreen('screen-21')));
+            document.querySelectorAll('.filter-en-camino').forEach(btn => btn.addEventListener('click', () => showScreen('screen-23')));
+            document.querySelectorAll('.filter-entregado').forEach(btn => btn.addEventListener('click', () => showScreen('screen-24')));
+
+            const copyIcons = document.querySelectorAll('.copy-icon-area');
+            const toast = document.getElementById('toast-notification');
+            copyIcons.forEach(icon => {
+                icon.addEventListener('click', () => {
+                    toast.classList.add('show');
+                    setTimeout(() => { toast.classList.remove('show'); }, 2000); 
+                });
+            });
+
+            const appContainer = document.getElementById('app-container');
+            let processingScroll = false; 
+
+            appContainer.addEventListener('wheel', function(event) {
+                if (processingScroll) return; 
+                if (currentScreenId === 'screen-12' && event.deltaY > 0) { 
+                    processingScroll = true; showScreen('screen-13');
+                } else if (currentScreenId === 'screen-13' && event.deltaY < 0) { 
+                    processingScroll = true; showScreen('screen-12');
+                }
+                setTimeout(() => { processingScroll = false; }, 500);
+            });
+
+            let touchStartY = null;
+            appContainer.addEventListener('touchstart', function(event) {
+                touchStartY = event.touches[0].clientY;
+            });
+            appContainer.addEventListener('touchmove', function(event) {
+                if (touchStartY === null) return;
+                const touchMoveY = event.touches[0].clientY;
+                const swipeDistance = touchStartY - touchMoveY;
+
+                if (currentScreenId === 'screen-12' && swipeDistance > 50) { 
+                    showScreen('screen-13'); touchStartY = null; 
+                } else if (currentScreenId === 'screen-13' && swipeDistance < -50) { 
+                    showScreen('screen-12'); touchStartY = null; 
+                }
+            });
+
+            const costoPorKg = 150000;
+            function setupCalculator(pesoInputId, costoInputId) {
+                const pesoInput = document.getElementById(pesoInputId);
+                const costoInput = document.getElementById(costoInputId);
+                if (!pesoInput || !costoInput) return;
+                function calculateCost() {
+                    const peso = parseFloat(pesoInput.value) || 0;
+                    const costoTotal = peso * costoPorKg;
+                    const formattedCost = new Intl.NumberFormat('de-DE').format(costoTotal.toFixed(0));
+                    costoInput.value = formattedCost;
+                }
+                pesoInput.addEventListener('input', calculateCost);
+                calculateCost();
+            }
+
+            setupCalculator('calculator-peso', 'calculator-costo');
+            setupCalculator('calculator-peso-19', 'calculator-costo-19');
+        });
+    </script>
+</body>
+</html>
